@@ -2,40 +2,57 @@ import SwiftUI
 
 struct SettingsView: View {
     @State private var autostart = AutostartManager.shared
+    @AppStorage("hasSeenWelcome") private var hasSeenWelcome: Bool = false
+    @Environment(\.openWindow) private var openWindow
 
     var body: some View {
-        VStack(spacing: 0) {
-            HStack {
-                Text("Settings")
-                    .font(.system(size: 13, weight: .semibold))
-                Spacer()
-            }
-            .padding(.horizontal, 14)
-            .padding(.top, 12)
-            .padding(.bottom, 8)
-
-            Divider().opacity(0.3)
-
-            VStack(spacing: 12) {
+        Form {
+            Section {
                 Toggle(isOn: Binding(
                     get: { autostart.isEnabled },
                     set: { autostart.setEnabled($0) }
                 )) {
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Launch at login")
-                            .font(.system(size: 13))
-                        Text("Open portman automatically when you log in")
-                            .font(.system(size: 11))
+                        Text("Open portman automatically when you log in.")
+                            .font(.caption)
                             .foregroundStyle(.secondary)
                     }
                 }
                 .toggleStyle(.switch)
             }
-            .padding(.horizontal, 14)
-            .padding(.vertical, 14)
 
-            Spacer()
+            Section {
+                Button {
+                    openWindow(id: "welcome")
+                } label: {
+                    HStack {
+                        Text("Show welcome screen")
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .font(.caption)
+                            .foregroundStyle(.tertiary)
+                    }
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+            }
+
+            Section {
+                LabeledContent("Version", value: appVersion)
+                LabeledContent("Build", value: buildNumber)
+            }
         }
+        .formStyle(.grouped)
+        .scrollContentBackground(.hidden)
         .onAppear { autostart.refresh() }
+    }
+
+    private var appVersion: String {
+        Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
+    }
+
+    private var buildNumber: String {
+        Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1"
     }
 }
