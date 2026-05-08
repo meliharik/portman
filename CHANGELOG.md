@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-05-08
+
 ### Added
 
 - Menu bar app that lists processes listening on TCP ports.
@@ -22,4 +24,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Targets macOS 15.0 (Sequoia) or later.
 - App Sandbox is disabled to allow spawning `lsof` and sending signals to other processes.
 
-[Unreleased]: https://github.com/meliharik/portman/compare/HEAD...HEAD
+[Unreleased]: https://github.com/meliharik/portman/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/meliharik/portman/releases/tag/v0.1.0
