@@ -86,8 +86,6 @@ Pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for developmen
 
 Found a bug or want a feature? Please open an issue using one of the [issue templates](https://github.com/meliharik/portman/issues/new/choose) — they prompt for the details we need to investigate.
 
-By participating in this project you agree to abide by its [Code of Conduct](CODE_OF_CONDUCT.md).
-
 ## Security
 
 If you discover a security vulnerability, please follow the process in [SECURITY.md](SECURITY.md). Please do not open a public issue for security reports.

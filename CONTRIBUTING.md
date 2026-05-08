@@ -2,8 +2,6 @@
 
 Thanks for your interest in contributing! This document covers the workflow, coding conventions, and how to get a pull request merged.
 
-By participating in this project you agree to abide by the [Code of Conduct](CODE_OF_CONDUCT.md).
-
 ## Quick links
 
 - [Reporting a bug](#reporting-a-bug)
