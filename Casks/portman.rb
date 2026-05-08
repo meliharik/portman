@@ -1,6 +1,6 @@
 cask "portman" do
   version "0.1.0"
-  sha256 :no_check
+  sha256 "79fe9066335bc713718cd2f91bd021609b413580f0d72c9276e5ddcf0ac0e885"
 
   url "https://github.com/meliharik/portman/releases/download/v#{version}/portman-#{version}.dmg"
   name "portman"
