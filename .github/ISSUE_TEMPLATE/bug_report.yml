@@ -1,0 +1,91 @@
+name: Bug report
+description: Report a problem with portman
+title: "[Bug]: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to file a bug report! Please fill out the form below as completely as you can — it makes the difference between a fix in a day and a back-and-forth that drags on for weeks.
+
+        Before submitting, please [search existing issues](https://github.com/meliharik/portman/issues?q=is%3Aissue) to make sure this hasn't already been reported.
+
+  - type: input
+    id: portman-version
+    attributes:
+      label: portman version
+      description: Open portman → Settings → look at the "Version" row.
+      placeholder: "0.1.0"
+    validations:
+      required: true
+
+  - type: input
+    id: macos-version
+    attributes:
+      label: macOS version
+      description: Run `sw_vers -productVersion` in Terminal.
+      placeholder: "15.2"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: arch
+    attributes:
+      label: Mac architecture
+      options:
+        - Apple Silicon (M1/M2/M3/M4)
+        - Intel
+    validations:
+      required: true
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Describe the bug in plain language.
+      placeholder: When I click the kill button on a port using HTTPS, the app crashes.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect to happen?
+      placeholder: The process should be terminated and the row should disappear from the list.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Be as specific as possible. If you can't reproduce reliably, say so.
+      value: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Console logs
+      description: Open Console.app, filter for "portman", reproduce the bug, and paste any relevant log lines here.
+      render: text
+
+  - type: textarea
+    id: screenshot
+    attributes:
+      label: Screenshot or screen recording
+      description: Drag and drop here. Optional but very helpful for UI bugs.
+
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: Before submitting
+      options:
+        - label: I am running the latest released version of portman.
+          required: true
+        - label: I have searched existing issues and this bug has not been reported.
+          required: true

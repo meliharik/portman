@@ -1,0 +1,54 @@
+name: Feature request
+description: Suggest a new feature or improvement
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a feature! Please describe the *problem* you're trying to solve before jumping to the solution — that helps us evaluate whether the proposed approach is the best one.
+
+        Before submitting, please [search existing issues](https://github.com/meliharik/portman/issues?q=is%3Aissue) and [discussions](https://github.com/meliharik/portman/discussions) to see if it's already been requested.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem are you trying to solve?
+      description: Describe the situation where you wish portman did something it currently doesn't.
+      placeholder: I work on multiple projects at once and want to mark certain ports as "important" so they sort to the top of the list.
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: How you imagine this feature working in the UI.
+      placeholder: A pin icon that appears on hover; pinned ports stay at the top in a separate section.
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you've considered
+      description: Other ways to solve the same problem, and why they're not as good.
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: How important is this to you?
+      options:
+        - Nice to have
+        - Would use frequently
+        - Blocking my use of the app
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: Before submitting
+      options:
+        - label: I have searched existing issues and discussions for similar requests.
+          required: true
+        - label: This is a single, focused feature (not a list of unrelated ideas).
+          required: true

@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Question or general discussion
+    url: https://github.com/meliharik/portman/discussions
+    about: Use Discussions for questions, ideas, or anything that isn't a confirmed bug or concrete feature request.
+  - name: Security vulnerability
+    url: https://github.com/meliharik/portman/security/advisories/new
+    about: Please report security issues privately, not through public issues.
