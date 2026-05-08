@@ -17,8 +17,8 @@ cask "portman" do
   app "portman.app"
 
   zap trash: [
-    "~/Library/Preferences/dev.meliharik.portman.plist",
-    "~/Library/Caches/dev.meliharik.portman",
     "~/Library/Application Support/dev.meliharik.portman",
+    "~/Library/Caches/dev.meliharik.portman",
+    "~/Library/Preferences/dev.meliharik.portman.plist",
   ]
 end
