@@ -1,0 +1,136 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to build (e.g. v0.1.0)"
+        required: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Build and publish DMG
+    runs-on: macos-15
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.tag || github.ref }}
+          fetch-depth: 0
+
+      - name: Select Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+
+      - name: Compute version
+        id: version
+        run: |
+          TAG="${{ github.event.inputs.tag || github.ref_name }}"
+          VERSION="${TAG#v}"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Building portman $VERSION ($TAG)"
+
+      - name: Build (Release)
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -project portman.xcodeproj \
+            -scheme portman \
+            -configuration Release \
+            -destination 'platform=macOS' \
+            -derivedDataPath build \
+            MARKETING_VERSION=${{ steps.version.outputs.version }} \
+            CURRENT_PROJECT_VERSION=${{ github.run_number }} \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            build
+
+      - name: Locate built app
+        id: app
+        run: |
+          APP_PATH="$(find build -name 'portman.app' -type d -path '*/Build/Products/Release/*' | head -n 1)"
+          if [ -z "$APP_PATH" ]; then
+            echo "::error::Could not locate built portman.app"
+            exit 1
+          fi
+          echo "path=$APP_PATH" >> "$GITHUB_OUTPUT"
+
+      - name: Ad-hoc sign
+        run: |
+          codesign --force --deep --sign - "${{ steps.app.outputs.path }}"
+          codesign --verify --deep --strict --verbose=2 "${{ steps.app.outputs.path }}"
+
+      - name: Install create-dmg
+        run: brew install create-dmg
+
+      - name: Create DMG
+        id: dmg
+        run: |
+          mkdir -p dist
+          DMG_PATH="dist/portman-${{ steps.version.outputs.version }}.dmg"
+          create-dmg \
+            --volname "portman ${{ steps.version.outputs.version }}" \
+            --window-pos 200 120 \
+            --window-size 540 360 \
+            --icon-size 96 \
+            --icon "portman.app" 140 170 \
+            --hide-extension "portman.app" \
+            --app-drop-link 400 170 \
+            --no-internet-enable \
+            "$DMG_PATH" \
+            "${{ steps.app.outputs.path }}"
+          echo "path=$DMG_PATH" >> "$GITHUB_OUTPUT"
+          shasum -a 256 "$DMG_PATH" | tee "$DMG_PATH.sha256"
+
+      - name: Generate release notes from CHANGELOG
+        id: notes
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          NOTES_FILE="$(mktemp)"
+          if grep -q "^## \[$VERSION\]" CHANGELOG.md; then
+            awk -v ver="$VERSION" '
+              $0 ~ "^## \\[" ver "\\]" { in_section=1; next }
+              in_section && /^## \[/ { exit }
+              in_section { print }
+            ' CHANGELOG.md > "$NOTES_FILE"
+          else
+            echo "Release notes are not yet listed in CHANGELOG.md for $VERSION." > "$NOTES_FILE"
+            echo "" >> "$NOTES_FILE"
+            echo "See the [unreleased section](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md#unreleased) for the latest changes." >> "$NOTES_FILE"
+          fi
+          {
+            echo "## Installation"
+            echo ""
+            echo "1. Download \`portman-$VERSION.dmg\` below."
+            echo "2. Open the DMG and drag **portman.app** to your Applications folder."
+            echo "3. The build is ad-hoc signed, so on first launch macOS will warn that the developer cannot be verified — right-click the app in Applications and choose **Open** to bypass this once."
+            echo ""
+            echo "**SHA-256:** \`$(awk '{print $1}' "${{ steps.dmg.outputs.path }}.sha256")\`"
+          } >> "$NOTES_FILE"
+          echo "file=$NOTES_FILE" >> "$GITHUB_OUTPUT"
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: portman ${{ steps.version.outputs.version }}
+          body_path: ${{ steps.notes.outputs.file }}
+          draft: false
+          prerelease: ${{ contains(steps.version.outputs.tag, '-') }}
+          files: |
+            ${{ steps.dmg.outputs.path }}
+            ${{ steps.dmg.outputs.path }}.sha256
