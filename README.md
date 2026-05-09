@@ -13,12 +13,9 @@
 
 A native macOS menu bar app that shows you which processes are listening on which ports — and lets you kill them with one click. No more `lsof | grep` followed by `kill -9`.
 
-<!-- TODO: add screenshot of the popover -->
-<!--
 <p align="center">
-  <img src="docs/screenshot.png" width="420" alt="portman popover" />
+  <img src="docs/screenshot.png" width="420" alt="portman popover showing a list of listening TCP ports with PIDs and commands" />
 </p>
--->
 
 ## Features
 
